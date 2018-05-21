@@ -9,26 +9,31 @@ import './Blog.css';
 class Blog extends Component {
 
     state = {
-        posts: []
+        posts: [],
+        selectedPostId: null
     }
 
-componentDidMount() {
+    componentDidMount() {
 
-    //Retrieving dummy JSON data and logging the response after retreival
-    axios.get('https://jsonplaceholder.typicode.com/posts')
-        .then(response => {
-            const posts = response.data.slice(0, 4);
-            const updatedPosts = posts.map(post => {
-                return {
-                    ...post,
-                    author: 'Chris'
-                }
+        //Retrieving dummy JSON data and logging the response after retreival
+        axios.get('https://jsonplaceholder.typicode.com/posts')
+            .then(response => {
+                const posts = response.data.slice(0, 4);
+                const updatedPosts = posts.map(post => {
+                    return {
+                        ...post,
+                        author: 'Chris'
+                    }
+                });
+                this.setState({posts: updatedPosts});
+                // console.log(response);
             });
-            this.setState({posts: updatedPosts});
-            // console.log(response);
-        });
 
-}
+    }
+
+    postSelectedHandler = (id) => {
+        this.setState({selectedPostId: id});
+    }
 
     render () {
         const posts = this.state.posts.map(post => {
@@ -36,7 +41,8 @@ componentDidMount() {
                 <Post 
                 key={post.id}
                 title={post.title}
-                author={post.author}/>
+                author={post.author}
+                clicked={() => this.postSelectedHandler(post.id)}/>
             )
         }
 
@@ -47,7 +53,8 @@ componentDidMount() {
                     {posts}
                 </section>
                 <section>
-                    <FullPost />
+                    <FullPost 
+                    id={this.state.selectedPostId}/>
                 </section>
                 <section>
                     <NewPost />
